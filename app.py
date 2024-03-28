@@ -3,6 +3,13 @@ import requests
 from openai import OpenAI
 from flask import Flask, jsonify, request, send_file
 import json
+from aiogram import Bot, Dispatcher, executor, types
+
+with open('config.json') as config_file:
+    config_data = json.load(config_file)
+
+bot = Bot(token = config_data['token'])
+dp = Dispatcher(bot)
 
 API_KEY = os.environ["OPENAI_API_KEY"]
 CATAPI_KEY = os.environ["CATAPI_KEY"]
@@ -15,6 +22,13 @@ chat_log = []
 breed_id = None
 
 app = Flask(__name__)
+
+@dp.message_handler(commands = ['start', 'help'])
+async def welcome(message: types.Message):
+    await message.reply("Hello! Im a bot that will provide cat pictures on request (:")
+
+@dp.message_handler()
+async def gpt(message: types.Message):
 
 def get_cat_image(): # call CatAPI and request for the url
     response = requests.get("https://api.thecatapi.com/v1/images/search", headers={"x-api-key": CATAPI_KEY})
@@ -140,4 +154,4 @@ def css():
     return send_file('styles.css')
 
 if __name__ == '__main__':
-    app.run(debug=True)
+    executor.start_polling(dp
