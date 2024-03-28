@@ -41,10 +41,10 @@ document.addEventListener("DOMContentLoaded", function() {
                         img.src = message.content
                         img.classList.add("chat-image")
 
-                        const p = document.createElement("p")
-                        p.textContent = `assistant:`
+                        //const p = document.createElement("p")
+                        //p.textContent = `assistant:`
 
-                        container.appendChild(p)
+                        //container.appendChild(p)
                         container.appendChild(img);
                         chatBox.appendChild(container)
                     } else { // normal openAI chatbot

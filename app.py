@@ -27,7 +27,7 @@ def get_cat_breed_image(breed):
     url = "https://api.thecatapi.com/v1/breeds"
     response = requests.get(url)
     if response.status_code == 200:
-        breeds = response.json()
+        breeds = response.json()    
         for line in breeds:
             if breed.lower() == line['name'].lower():
                 breed_id = line['id']
@@ -38,16 +38,6 @@ def get_cat_breed_image(breed):
     else:
         return None
     
-def get_breed_id(message):
-    url = "https://api.thecatapi.com/v1/breeds"
-    response = requests.get(url)
-    if response.status_code == 200:
-        breeds = response.json()
-        for word in message.split():
-            for breed in breeds:
-                if word.lower() == breed['name'].lower():
-                    return breed['id']
-    return None
 
 @app.route('/api/call-python', methods=['POST'])
 def call_python():
@@ -85,16 +75,6 @@ def call_python():
     if message:
         chat_log.append({"role":"user", "content": message})
         
-        #if prompt for cat picture, proc CatAPI
-        '''if any(keyword in message.lower() for keyword in ['show me a cat', 'show cat', 'cat picture', 'cat image', 'give me a cat']): 
-            breed_id = get_breed_id(message)
-            if breed_id:
-                cat_image_url = get_cat_breed_image(breed_id)
-            else:
-                cat_image_url = get_cat_image()
-            chat_log.append({"role": "assistant", "content": cat_image_url})
-        else: # else just use openAI client'''
-        
         response = client.chat.completions.create(
             model="gpt-4-turbo-preview",
             tools = tools,
@@ -103,7 +83,6 @@ def call_python():
         )
         assistant_response = response.choices[0].message
         tool_calls = assistant_response.tool_calls
-        breed_id = get_breed_id(message)
         if tool_calls:
             available_functions = {
                 "get_cat_image": get_cat_image,
